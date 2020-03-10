@@ -30,8 +30,8 @@ class conv_net:
             tf.keras.layers.Dropout(rate=0.5),
             # 2중 layer 설계. 중간에 과적합 방지를 위한 dropout layer 설계
 
-            tf.keras.layers.Dense(units=10, activation='softmax')
-            # 출력값 10개. 감성 맵 모델링 이후 수정해야할 듯.
+            tf.keras.layers.Dense(units=20, activation='softmax')
+            # 출력값 20개. 태그에 따른 20개로 결정
         ])
         self.neural_network_layer.compile(
             optimizer=tf.keras.optimizers.Adam(),
