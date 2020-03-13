@@ -7,21 +7,15 @@ class image_process:
     @staticmethod
     def image_resize(image_location, size):
         #이미지의 가로세로 크기 비율을 일정하게 줄이는 함수. image_to_resized_numpy의 기본 속성에 따라 최대길이 200으로 비율 맞게 리사이징됨.
-        try:
-            raw_import= load_img(image_location)
-        except FileNotFoundError:
-            image_over_internet = requests.get(image_location).content
-            with open('data.png', 'wb') as f:
-                f.write(image_over_internet)
-            raw_import= load_img('data.png')
+        raw_import = load_img(image_location)
         raw_import.thumbnail((size, size))
         return raw_import
 
     @staticmethod
     def image_add_padding(image_data, size):
         #이미지가 정사각형 이미지가 아닐 때 패딩 추가해주는 함수.
-        col = int((200 - image_data.size[0]) / 2)
-        row = int((200 - image_data.size[1]) / 2)
+        col = int((size - image_data.size[0]) / 2)
+        row = int((size - image_data.size[1]) / 2)
         padding_image = Image.new("RGB", (size, size))
         padding_image.paste(image_data, (col, row))
         return padding_image
@@ -34,7 +28,16 @@ class image_process:
         """
         n_array = img_to_array(image_data)
         n_array = n_array.reshape((1,) + n_array.shape)
-        return n_array
+        n_array = n_array/255.0
+        return n_array[0]
+
+
+    @staticmethod
+    def image_to_numpy_loc(image_loc):
+        image_data = load_img(image_loc)
+        n_array = img_to_array(image_data)
+        n_array = n_array.reshape((1,) + n_array.shape)
+        n_array = n_array / 255.0
 
 
     @staticmethod
