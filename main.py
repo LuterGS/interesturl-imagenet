@@ -4,25 +4,24 @@ import matplotlib.pyplot as plt
 import os.path
 
 pic_size = 100
+answer_len = 6
 #사진 리사이징 한 변의 길이. 많은 변수를 좌지우지하므로 메인에서 관
 
-array_path = 'tag_test.npz'
-if os.path.isfile(array_path):
-    pass
-else :
-    data_setup.save_data(pic_size, 0.8)
-train_input, train_answer, test_input, test_answer = data_setup.load_data()
+train_input, train_answer, test_input, test_answer = data_setup.fetch_data(pic_size, 'gagu')
 print("Get ALL data complete\n")
+print(train_input.shape)
 
-train_model = conv_net.conv_net(pic_size)
+train_model = conv_net.conv_net(pic_size, 0.0001, answer_len)
 print("Set NN Model complete\n")
 
-train_model.train(train_input, train_answer, 25)
+train_model.neural_network_layer.summary()
+
+train_model.train(train_input, train_answer, 10, 'checkpoint')
 print("Train Model complete\n")
 
 
 #draw graph
-plt.figure(figsuze=(12,4))
+plt.figure(figsize=(12,4))
 
 plt.subplot(1, 2, 1)
 plt.plot(train_model.history.history['loss'], 'b-', label='loss')
@@ -41,4 +40,6 @@ plt.show()
 
 
 train_model.test(test_input, test_answer)
-print("Test Model completeb\n")
+print("Test Model complete\n")
+
+

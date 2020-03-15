@@ -38,6 +38,7 @@ class image_process:
         n_array = img_to_array(image_data)
         n_array = n_array.reshape((1,) + n_array.shape)
         n_array = n_array / 255.0
+        return n_array
 
 
     @staticmethod

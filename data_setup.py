@@ -1,11 +1,11 @@
 import image_process
 import numpy as np
 import random
-
+import os.path
 import matplotlib.pyplot as plt
 
 """
-데이터셋 개수
+데이터셋 개수 (cloth)
 
 걸리시 935개 2092
 댄디 854개 1739
@@ -29,17 +29,32 @@ import matplotlib.pyplot as plt
 힙합 30개 70
 """
 
-tag_list = ['걸리시', '댄디', '데이트', '레트로', '로맨틱', '비즈니스', '세미 포멀', '스쿨', '스트릿', '스포츠 캐주얼', '스포츠', '시크', '여행', '유스', '이지 캐주얼', '캐주얼', '캠퍼스', '페미닌', '포멀', '힙합']
-tag_maxnum = [2092, 1739, 311, 243, 721, 440, 885, 373, 9040, 692, 1193, 523, 246, 693, 5118, 11586, 934, 2, 3559, 70]
+cloth_tag_list = ['걸리시', '댄디', '데이트', '레트로', '로맨틱', '비즈니스', '세미 포멀', '스쿨', '스트릿', '스포츠 캐주얼', '스포츠', '시크', '여행', '유스', '이지 캐주얼', '캐주얼', '캠퍼스', '페미닌', '포멀', '힙합']
+cloth_tag_maxnum = [2092, 1739, 311, 243, 721, 440, 885, 373, 9040, 692, 1193, 523, 246, 693, 5118, 11586, 934, 2, 3559, 70]
+cloth_tag_maxnum_adjusted = [800, 700, 311, 243, 721, 440, 885, 373, 800, 692, 800, 523, 246, 693, 800, 800, 934, 2, 800, 70]
 
 
-def save_data(pic_size, test_ratio):
-    train_input, train_answer, test_input, test_answer = get_test_train_data(pic_size, test_ratio)
-    np.savez('tag_test.npz', train_input=train_input, train_answer=train_answer, test_input=test_input, test_answer=test_answer)
+gagu_tag_list = ['내츄럴', '럭셔리', '모던&심플', '북유럽', '빈티지', '클래식']
+gagu_tag_maxnum = [3188, 899, 6471, 446, 2897, 1864]
+
+def fetch_data(pic_size, data='cloth'):
+    array_path = data + '_tag_data.npz'
+    if os.path.isfile(array_path):
+        pass
+    else:
+        print("No original data found, will fetch data from raw image\n")
+        save_data(pic_size, 0.8, data)
+    train_input, train_answer, test_input, test_answer = load_data(data)
+    return train_input, train_answer, test_input, test_answer
 
 
-def load_data():
-    all = np.load('tag_test.npz')
+def save_data(pic_size, test_ratio, data='cloth'):
+    train_input, train_answer, test_input, test_answer = get_test_train_data(pic_size, test_ratio, data)
+    np.savez(data + '_tag_data.npz', train_input=train_input, train_answer=train_answer, test_input=test_input, test_answer=test_answer)
+
+
+def load_data(data='cloth'):
+    all = np.load(data + '_tag_data.npz')
     train_input = all['train_input']
     train_answer = all['train_answer']
     test_input = all['test_input']
@@ -47,8 +62,8 @@ def load_data():
     return train_input, train_answer, test_input, test_answer
 
 
-def get_test_train_data(pic_size, test_ratio):
-    input, answer = get_data(pic_size)
+def get_test_train_data(pic_size, test_ratio, data):
+    input, answer = get_data(pic_size, 'list', data=data)
     print(len(answer))
     train_ratio = int(len(answer) * test_ratio)
     train_input, train_answer = input[0:train_ratio], answer[0:train_ratio]
@@ -60,20 +75,39 @@ def get_test_train_data(pic_size, test_ratio):
     return train_input, train_answer, test_input, test_answer
 
 
-def get_data(pic_size, type='list'):
+
+def get_data(pic_size, type='list', data="cloth"):
     input, output, raw = [], [], []
-    for i in range(20):
+
+    if data == "cloth":
+        output_len = 20
+        tag_maxnum = cloth_tag_maxnum
+        tag_list = cloth_tag_list
+        file_path = 'test_data'
+    elif data == "gagu":
+        output_len = 6
+        tag_maxnum = gagu_tag_maxnum
+        tag_list = gagu_tag_list
+        file_path = 'gagu_data'
+
+    print(tag_maxnum, tag_list)
+
+    for i in range(output_len):
         for j in range(tag_maxnum[i]):
-            to_string = str(j+1)
+            to_string = str(j + 1)
+            #print('/home/lutergs/Documents/' + file_path + '/' + tag_list[i] + '_' + to_string + '.jpg')
             try:
                 raw.append([image_process.image_process.image_to_resized_numpy(
-                    '/home/lutergs/Documents/test_data/' + tag_list[i] + '_' + to_string + '.jpg', 100), i])
+                    '/home/lutergs/Documents/' + file_path + '/' + tag_list[i] + '_' + to_string + '.jpg', pic_size, '/home/lutergs/Documents/gagu_test/' + tag_list[i] + to_string + '.jpg'), i])
             except FileNotFoundError:
                 pass
+
+    print(len(raw))
     random.shuffle(raw)
     for i in range(len(raw)):
         input.append(raw[i][0])
         output.append(raw[i][1])
+
 
     if type == 'array':
         input_np = np.asarray(input, dtype=np.float32)
@@ -86,7 +120,7 @@ def get_data(pic_size, type='list'):
 
 def test_d():
     input, output, raw_data = [], [], []
-    raw_data.append([image_process.image_process.image_to_resized_numpy('/home/lutergs/Documents/test_data/걸리시_1.jpg', 200), 0])
+    raw_data.append([image_process.image_process.image_to_resized_numpy('/home/lutergs/Documents/gagu_data/내츄럴_1.jpg', 200, '/home/lutergs/Documents/gagu_test/내츄럴_1.jpg'), 0])
     random.shuffle(raw_data)
 
     for i in range(len(raw_data)):
