@@ -95,7 +95,7 @@ def get_data(pic_size, type='list', data="cloth"):
     for i in range(output_len):
         for j in range(tag_maxnum[i]):
             to_string = str(j + 1)
-            #print('/home/lutergs/Documents/' + file_path + '/' + tag_list[i] + '_' + to_string + '.jpg')
+            print('/home/lutergs/Documents/' + file_path + '/' + tag_list[i] + '_' + to_string + '.jpg')
             try:
                 raw.append([image_process.image_process.image_to_resized_numpy(
                     '/home/lutergs/Documents/' + file_path + '/' + tag_list[i] + '_' + to_string + '.jpg', pic_size, '/home/lutergs/Documents/gagu_test/' + tag_list[i] + to_string + '.jpg'), i])
@@ -133,11 +133,4 @@ def test_d():
 
 
 if __name__ == "__main__":
-    input, output = test_d()
-
-    plt.figure(figsize=(10,10))
-    plt.imshow(input[0], cmap='gray')
-    plt.show()
-
-
-    print(input.shape, input[0], output.shape, output)
+    save_data(300, 0.8, 'gagu')

@@ -37,52 +37,81 @@ class conv_net:
             tf.keras.layers.Dense(units=20, activation='softmax')
             # 출력값 20개. 태그에 따른 20개로 결정
         ])
-        self.nn_vgg16_semi = tf.keras.Sequential([
-            tf.keras.layers.Conv2D(input_shape=(pic_size, pic_size, 3), kernel_size=(3, 3), filters=64, padding='same', activation='relu'),  # input_shape 에서 이미지 사이즈 조정해야할듯
-                # VGG-16 Layer 1-1
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=64, padding='same', strides=(2, 2), activation='relu'),
-                # VGG-16 Layer 1-2
+        self.nn_vgg19_lutergs = tf.keras.Sequential([
+            tf.keras.layers.Input(shape=(pic_size, pic_size, 3)),
+            #tf.keras.layers.Conv2D(name='InputLayer', input_shape=[(pic_size, pic_size, 3)], kernel_size=(3, 3), filters=64, padding='same', activation='relu'),  # input_shape 에서 이미지 사이즈 조정해야할듯
+                # VGG-19 Layer (InputLayer)
 
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=128, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 2-1
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=128, padding='same', strides=(2, 2), activation='relu'),
-                # VGG-16 Layer 2-2
+            # Block 1
+            tf.keras.layers.Conv2D(name='block1_conv1', kernel_size=(3, 3), filters=64, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 1-1 (block1_conv1 (Conv2D))
+            tf.keras.layers.Conv2D(name='block1_conv2', kernel_size=(3, 3), filters=64, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 1-2 (block1_conv2 (Conv2D))
+            tf.keras.layers.MaxPooling2D(name='block1_pool', strides=(2, 2)),
+                # VGG-19 Layer 1-3 (block1_pool (MaxPooling2D))
 
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 3-1
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 3-2
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=256, padding='same', strides=(2, 2), activation='relu'),
-                # VGG-16 Layer 3-3
+            # Block 2
+            tf.keras.layers.Conv2D(name='block2_conv1', kernel_size=(3, 3), filters=128, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 2-1 (block2_conv1 (Conv2D))
+            tf.keras.layers.Conv2D(name='block2_conv2', kernel_size=(3, 3), filters=128, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 2-2 (block2_conv2 (Conv2D))
+            tf.keras.layers.MaxPooling2D(name='block2_pool', strides=(2, 2)),
+                # VGG-19 Layer 2-3 (block2_pool (MaxPooling2D))
 
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 4-1
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 4-2
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(2, 2), activation='relu'),
-                # VGG-16 Layer 4-3
+            # Block 3
+            tf.keras.layers.Conv2D(name='block3_conv1', kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 3-1 (block3_conv1 (Conv2D))
+            tf.keras.layers.Conv2D(name='block3_conv2', kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 3-2 (block3_conv2 (Conv2D))
+            tf.keras.layers.Conv2D(name='block3_conv3', kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 3-3 (block3_conv3 (Conv2D))
+            tf.keras.layers.Conv2D(name='block3_conv4', kernel_size=(3, 3), filters=256, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 3-4 (block3_conv4 (Conv2D))
+            tf.keras.layers.MaxPooling2D(name='block3_pool', strides=(2, 2)),
+                # VGG-19 Layer 3-5 (block3_pool (MaxPooling2D))
 
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 5-1
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
-                # VGG-16 Layer 5-2
-            tf.keras.layers.Conv2D(kernel_size=(3, 3), filters=512, padding='same', strides=(2, 2), activation='relu'),
-                # VGG-16 Layer 5-3
+            # Block 4
+            tf.keras.layers.Conv2D(name='block4_conv1', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 4-1 (block4_conv1 (Conv2D))
+            tf.keras.layers.Conv2D(name='block4_conv2', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 4-2 (block4_conv2 (Conv2D))
+            tf.keras.layers.Conv2D(name='block4_conv3', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 4-3 (block4_conv3 (Conv2D))
+            tf.keras.layers.Conv2D(name='block4_conv4', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 4-4 (block4_conv4 (Conv2D))
+            tf.keras.layers.MaxPooling2D(name='block4_pool', strides=(2, 2)),
+                # VGG-19 Layer 4-5 (block4_pool (MaxPooling2D))
+
+            # Block 5
+            tf.keras.layers.Conv2D(name='block5_conv1', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 5-1 (block5_conv1 (Conv2D))
+            tf.keras.layers.Conv2D(name='block5_conv2', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 5-2 (block5_conv2 (Conv2D))
+            tf.keras.layers.Conv2D(name='block5_conv3', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 5-3 (block5_conv3 (Conv2D))
+            tf.keras.layers.Conv2D(name='block5_conv4', kernel_size=(3, 3), filters=512, padding='same', strides=(1, 1), activation='relu'),
+                # VGG-19 Layer 5-4 (block5_conv4 (Conv2D))
+            tf.keras.layers.MaxPooling2D(name='block5_pool', strides=(2, 2)),
+                # VGG-19 Layer 5-5 (block5_pool (MaxPooling2D))
 
             tf.keras.layers.Flatten(),
-                # VGG-16 Layer fc1
+                # VGG-19 Layer Flatten
 
-            tf.keras.layers.Dense(units=4096, activation='relu'),
-            tf.keras.layers.Dropout(rate=0.2),
-                # VGG-16 Layer fc2
-            tf.keras.layers.Dense(units=20, activation='softmax')
-                # VGG-16 Layer fc3
+            tf.keras.layers.Dense(name='fc1', units=4096, activation='relu'),
+            tf.keras.layers.Dropout(name='fc1_dropout', rate=0.2),
+                # VGG-19 Layer fc1
+                # VGG-19 Layer fc2
+            tf.keras.layers.Dense(name='fc3', units=1024, activation='relu'),
+            tf.keras.layers.Dropout(name='fc3_dropout', rate=0.2),
+                # VGG-19 Layer fc3
+            tf.keras.layers.Dense(name='fc4', units=512, activation='relu'),
+                # VGG-19 Layer fc4
+            tf.keras.layers.Dense(name='prediction', units=6, activation='softmax')
+                # VGG-19 Layer fc5
         ])
         self.nn_vgg16_keras = VGG16(weights=None, input_shape=(pic_size, pic_size, 3), include_top=True, classes=answer_len)
-        self.nn_vgg19_keras = vgg19.VGG19_LuterGS(weights=None, input_shape=(pic_size, pic_size, 3), include_top=True, classes=answer_len)
-            # 이 모델은 기존 vgg19 모델에서 1차원 신경망 수만 늘려준 것으로, 기존의 4096개 노드층에서 6개 정답층으로 급작스럽게 노드수가 줄어드는것을 막았다. 텐서플로우 파일을 직접 수정했으며, 추후 직접 수정하지 않고 이 코드 내에 구현할 것이다.
-
-        self.neural_network_layer = self.nn_vgg19_keras
+        
+        self.neural_network_layer = self.nn_vgg19_lutergs
 
         self.neural_network_layer.compile(
             optimizer=tf.keras.optimizers.Adam(lr=learning_rate),
@@ -95,7 +124,7 @@ class conv_net:
         checkpoint_path = 'training/' + checkpoint_name + ".ckpt"
         checkpoint_dir = os.path.dirname(checkpoint_path)
         checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-            checkpoint_path, save_weights_only=True)
+            checkpoint_path, save_weights_only=True, verbose=1)
 
         self.history = self.neural_network_layer.fit(input, answer, epochs=epochs, validation_split=validation_split, callbacks=[checkpoint_callback])
 
